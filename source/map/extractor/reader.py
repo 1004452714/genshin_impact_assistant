@@ -12,7 +12,6 @@ from source.en_tools.poi_json_api import zh2en
 
 class PointItemModel(BaseModel):
     count: int
-    iconTag: str
     itemId: int
 
 
@@ -33,31 +32,6 @@ class PointInfoModel(BaseModel):
     class Config:
         keep_untouched = (cached_property,)
 
-    @cached_property
-    def first_item(self) -> t.Optional[PointItemModel]:
-        for item in self.itemList:
-            if item.iconTag == '传送锚点':
-                return item
-            if item.iconTag == '副本':
-                return item
-            if item.iconTag == '秘境':
-                return item
-            if '神像' in item.iconTag:
-                return item
-        return None
-
-    @cached_property
-    def teleporter(self) -> t.Optional[str]:
-        tag = self.first_item.iconTag
-        if tag == '传送锚点':
-            return MapConverter.TP_Teleporter
-        if '神像' in tag:
-            return MapConverter.TP_Statue
-        if tag == '副本':
-            return MapConverter.TP_Instance
-        if tag == '秘境':
-            return MapConverter.TP_Domain
-        return None
 
     @cached_property
     def position_tuple(self) -> t.Tuple[float, float]:
@@ -66,25 +40,6 @@ class PointInfoModel(BaseModel):
         y = float(y)
         return x, y
 
-    @cached_property
-    def teleporter_name(self) -> str:
-        if self.first_item.iconTag == '传送锚点' or '神像' in self.first_item.iconTag:
-            if self.first_item.itemId == 758:
-                return '三界路飨祭'
-            res = re.search(r'【(.*)】', self.content)
-            if res:
-                name = res.group(1)
-                for region in ['蒙德', '璃月', '稻妻', '须弥', '层岩巨渊', '金苹果群岛']:
-                    if region in name:
-                        try:
-                            _, name = name.rsplit(' ', maxsplit=1)
-                        except ValueError:
-                            pass
-                return name
-
-            return ''
-        else:
-            return self.markerTitle
 
 
 class ItemModel(BaseModel):
@@ -96,13 +51,13 @@ class ItemModel(BaseModel):
     hiddenFlag: int
     iconStyleType: int
     iconTag: str
-    itemId: int
+    id: int
     name: str
     sortIndex: int
     # specialFlag: int
     typeIdList: t.List[int]
     version: int
-    
+
 
 
 class AreaModel(BaseModel):
@@ -157,12 +112,51 @@ class PoiJsonApi:
 
     @cached_property
     def item(self) -> t.Dict[int, ItemModel]:
-        return self.read_json(os.path.join(self.path, './item.json'), ItemModel, 'itemId')
+        return self.read_json(os.path.join(self.path, './item.json'), ItemModel, 'id')
 
     @cached_property
     def area(self) -> t.Dict[int, AreaModel]:
         return self.read_json(os.path.join(self.path, './area.json'), AreaModel, 'areaId')
 
+    def findTP(self,itemList) -> int:
+        TPname=["秘境","神像","副本","传送锚点"]
+        for it in itemList:
+            itemId=it.itemId
+            if self.item[itemId].iconTag in TPname:
+                return itemId
+        return None
+    
+    def teleporter(self,name) -> t.Optional[str]:
+        if name == '传送锚点':
+            return MapConverter.TP_Teleporter
+        if '神像' in name:
+            return MapConverter.TP_Statue
+        if name == '副本':
+            return MapConverter.TP_Instance #感觉没必要区分副本跟秘境
+            # return MapConverter.TP_Domain
+        if name == '秘境':
+            return MapConverter.TP_Domain
+        return None
+
+    def teleporter_name(self,markerTitle,item_id,content) -> str:
+        if markerTitle == '传送锚点' or '神像' in markerTitle:
+            if item_id == 758:
+                return '三界路飨祭'
+            res = re.search(r'【(.*)】', content)
+            if res:
+                name = res.group(1)
+                for region in ['蒙德', '璃月', '稻妻', '须弥','枫丹', '层岩巨渊', '金苹果群岛']:
+                    if region in name:
+                        try:
+                            _, name = name.rsplit(' ', maxsplit=1)
+                        except ValueError:
+                            pass
+                return name
+
+            return ''
+        else:
+            return markerTitle
+        
     DICT_AREA_ID = {
         1: MapConverter.REGION_Liyue,
         2: MapConverter.REGION_Liyue,
@@ -170,6 +164,7 @@ class PoiJsonApi:
         4: MapConverter.REGION_TheChasm,
         5: MapConverter.REGION_Mondstadt,
         6: MapConverter.REGION_Mondstadt,
+        8: MapConverter.REGION_GoldenAppleArchipelago,
         10: MapConverter.REGION_GoldenAppleArchipelago,
         11: MapConverter.REGION_Inazuma,
         12: MapConverter.REGION_Inazuma,
@@ -183,25 +178,31 @@ class PoiJsonApi:
         21: MapConverter.REGION_Sumeru,
         22: MapConverter.REGION_Sumeru,
         23: MapConverter.REGION_Sumeru,
+        26: MapConverter.REGION_VeluriyamMirage,
+        28: MapConverter.REGION_Fontaine,
+        29: MapConverter.REGION_Fontaine,
+        30: MapConverter.REGION_Fontaine,
+        34: MapConverter.REGION_Liyue,
     }
 
     def iter_teleporter(self, lang='zh_CN'):
         for id_, row in self.data.items():
-            if row.first_item is None:
+            item_id=self.findTP(row.itemList)
+            if item_id is None :
                 continue
-            item_id = row.first_item.itemId
             area_id = self.item[item_id].areaId
             region = self.DICT_AREA_ID.get(area_id, area_id)
             layer = MapConverter.convert_REGION_to_LAYER(region)
             position = MapConverter.convert_kongying_to_GIMAP(row.position_tuple, layer=layer).round(3)
+            name = self.teleporter_name(row.markerTitle,item_id,row.content)
             if lang=='en_US':
-                name = zh2en(row.teleporter_name)
+                name = zh2en(name)
             
             tp = TeleporterModel(
                 id=row.id,
                 region=region,
-                tp=row.teleporter,
-                item_id=row.first_item.itemId,
+                tp=self.teleporter(self.item[item_id].iconTag),
+                item_id=item_id,
                 name=name,
                 position=tuple(position),
             )
@@ -225,6 +226,6 @@ class PoiJsonApi:
 
 if __name__ == '__main__':
     lang='en_US'
+    # lang='zh_CN'
     self = PoiJsonApi()
     self.save_teleporter(lang=lang)
-    

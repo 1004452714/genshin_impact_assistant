@@ -369,6 +369,8 @@ class Map(MiniMap, BigMap, MapConverter):
             tp_icon = asset.MapAreaDQ
         elif tp_region == "Sumeru":
             tp_icon = asset.MapAreaXM
+        elif tp_region == "Fontaine":
+            tp_icon = asset.MapAreaFD
         else:
             logger.error(t2t("Unknown region"))
         while 1:

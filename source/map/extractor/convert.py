@@ -30,7 +30,9 @@ class MapConverter:
     REGION_ThreeRealmsGatewayOffering = 'ThreeRealmsGatewayOffering'
     REGION_Enkanomiya = 'Enkanomiya'
     REGION_Sumeru = 'Sumeru'
-
+    REGION_VeluriyamMirage='VeluriyamMirage'
+    REGION_Fontaine='Fontaine'
+    
     TP_Statue = 'Statue'
     TP_Teleporter = 'Teleporter'
     TP_Domain = 'Domain'
