@@ -132,8 +132,7 @@ class PoiJsonApi:
         if '神像' in name:
             return MapConverter.TP_Statue
         if name == '副本':
-            return MapConverter.TP_Instance #感觉没必要区分副本跟秘境
-            # return MapConverter.TP_Domain
+            return MapConverter.TP_Instance
         if name == '秘境':
             return MapConverter.TP_Domain
         return None

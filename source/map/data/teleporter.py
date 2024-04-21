@@ -141,9 +141,9 @@ DICT_TELEPORTER = {
     24136: TeleporterModel(id=24136, region='GoldenAppleArchipelago', tp='Teleporter', item_id=1098, name='破破岛', position=(-85.5, -2642.935)),
     24137: TeleporterModel(id=24137, region='GoldenAppleArchipelago', tp='Teleporter', item_id=1098, name='破破岛', position=(-91.7, -2873.3)),
     24138: TeleporterModel(id=24138, region='GoldenAppleArchipelago', tp='Teleporter', item_id=1098, name='破破岛', position=(86.5, -3504.718)),
-    #    13408: TeleporterModel(id=13408, region='Inazuma', tp='Statue', item_id=336, name='离岛', position=(7842.925, 4429.069)),
+    # 13408: TeleporterModel(id=13408, region='Inazuma', tp='Statue', item_id=336, name='离岛', position=(7842.925, 4429.069)), # minimap tracker error
     13406: TeleporterModel(id=13406, region='Inazuma', tp='Statue', item_id=336, name='绯木村', position=(6524.095, 5425.882)),
-    13407: TeleporterModel(id=13407, region='Inazuma', tp='Statue', item_id=336, name='踏鞴砂', position=(7324.447, 5295.089)),
+    # 13407: TeleporterModel(id=13407, region='Inazuma', tp='Statue', item_id=336, name='踏鞴砂', position=(7324.447, 5295.089)), # minimap tracker error
     10313: TeleporterModel(id=10313, region='Inazuma', tp='Teleporter', item_id=337, name='九条镇屋', position=(7479.511, 5123.537)),
     10892: TeleporterModel(id=10892, region='Inazuma', tp='Teleporter', item_id=337, name='八酝岛', position=(6508.256, 5259.634)),
     10894: TeleporterModel(id=10894, region='Inazuma', tp='Teleporter', item_id=337, name='八酝岛', position=(6664.885, 5763.838)),
@@ -324,7 +324,7 @@ DICT_TELEPORTER = {
     6288: TeleporterModel(id=6288, region='Mondstadt', tp='Teleporter', item_id=51, name='达达乌帕谷', position=(5913.964, 1389.94)),
     6278: TeleporterModel(id=6278, region='Mondstadt', tp='Teleporter', item_id=51, name='风龙废墟', position=(4578.417, 249.452)),
     6279: TeleporterModel(id=6279, region='Mondstadt', tp='Teleporter', item_id=51, name='风龙废墟', position=(4858.69, 353.26)),
-    #    6280: TeleporterModel(id=6280, region='Mondstadt', tp='Teleporter', item_id=51, name='风龙废墟', position=(4697.584, 457.263)),
+    # 6280: TeleporterModel(id=6280, region='Mondstadt', tp='Teleporter', item_id=51, name='风龙废墟', position=(4697.584, 457.263)),
     6281: TeleporterModel(id=6281, region='Mondstadt', tp='Teleporter', item_id=51, name='风龙废墟', position=(4522.53, 513.251)),
     6559: TeleporterModel(id=6559, region='Mondstadt', tp='Domain', item_id=52, name='仲夏庭园', position=(6008.354, 586.482)),
     6560: TeleporterModel(id=6560, region='Mondstadt', tp='Domain', item_id=52, name='塞西莉亚苗圃', position=(4976.383, 766.869)),
