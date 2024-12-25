@@ -164,6 +164,11 @@ TASK_MANAGER = TaskManager()
 
 if __name__ == '__main__':
     tm = TASK_MANAGER
+    # python -m source.task.task_manager
+    tm.setDaemon(True)
+    tm.start_tasklist_flag=True
+    tm.task_list=[LAUNCH_GENSHIN_TASK,DOMAIN_TASK,COMMISSION_TASK,CLAIM_REWARD_TASK]
+    tm.start()
     # keyboard.add_hotkey(load_json("keymap.json", f"{CONFIG_PATH_SETTING}")["task"], tm.start_stop_task, args=("CollectionPathTask",))
     while 1:
         time.sleep(1)
